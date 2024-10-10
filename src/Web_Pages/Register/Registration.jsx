@@ -1,8 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import auth from '../../FirebaseStuffs/Frb';
 
 const Registration = () => {
+    const data = auth
+    console.log(data)
     const handleRegister = async(e)=>{
         e.preventDefault();
         const form = e.target;
@@ -10,7 +14,18 @@ const Registration = () => {
         const email = form.email.value;
         const password = form.password.value;
         const image = form.image.files[0];
+        const formdata = new FormData();
+        formdata.append('image',image)
+        console.log(formdata)
         console.log(name,email,password,image)
+        console.log(import.meta.env.VITE_IMG_API)
+        try{
+            const {data} = await axios.post(`https://api.imgbb.com/1/upload?expiration=600&key=${import.meta.env.VITE_IMG_API}`,formdata)
+            console.log(data?.data?.display_url)
+        }
+        catch(error){
+            console.error(error)
+        }
     }
     return (
         <div className='w-full h-screen flex justify-center items-center'>
