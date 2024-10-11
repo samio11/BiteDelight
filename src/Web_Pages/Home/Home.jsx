@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import SliderHome from './SliderHome';
 
 const Home = () => {
     return (
@@ -7,6 +8,9 @@ const Home = () => {
             <Helmet>
                 <title>BiteDelight | Home</title>
             </Helmet>
+            <div>
+                <SliderHome></SliderHome>
+            </div>
         </div>
     );
 };

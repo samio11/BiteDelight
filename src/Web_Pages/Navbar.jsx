@@ -6,6 +6,7 @@ import { axiosSecure } from '../Reuses/useAxiosSecure';
 
 const Navbar = () => {
     const { user, logOut } = useContext(ContextProvider)
+    console.log(user)
     const navigate = useNavigate()
     const handleLogOut = async () => {
         await logOut();
@@ -81,7 +82,7 @@ const Navbar = () => {
                                 </div>
                                 <div
                                     tabIndex={0}
-                                    className="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow">
+                                    className="card card-compact dropdown-content bg-base-100 z-[50] mt-3 w-52 shadow">
                                     <div className="card-body">
                                         <span className="text-lg font-bold">8 Items</span>
                                         <span className="text-info">Subtotal: $999</span>
@@ -96,16 +97,17 @@ const Navbar = () => {
                                     <div className="w-10 rounded-full">
                                         <img
                                             alt="Tailwind CSS Navbar component"
-                                            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                                            src={user?.photoURL} />
                                     </div>
                                 </div>
                                 <ul
                                     tabIndex={0}
-                                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[50] mt-3 w-52 p-2 shadow">
                                     <li>
                                         <a className="justify-between">
-                                            Profile
-                                            <span className="badge">New</span>
+                                            {user?.displayName}
+                                            {/* This will be update while useRole Implemented */}
+                                            <span className="badge badge-secondary badge-outline">Guest</span>
                                         </a>
                                     </li>
                                     <li><a>Settings</a></li>
