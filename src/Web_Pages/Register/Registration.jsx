@@ -1,31 +1,49 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import auth from '../../FirebaseStuffs/Frb';
+import { imageUpload } from '../../Reuses/ImageApi';
+import toast from 'react-hot-toast';
+import { ContextProvider } from '../../Auths/User_Managemrnt_Context';
+import { updateProfile } from 'firebase/auth';
 
 const Registration = () => {
-    const data = auth
-    console.log(data)
-    const handleRegister = async(e)=>{
+    const { emailPasswordRegister } = useContext(ContextProvider)
+    const navigate = useNavigate()
+    const handleRegister = async (e) => {
         e.preventDefault();
         const form = e.target;
         const name = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
         const image = form.image.files[0];
-        const formdata = new FormData();
-        formdata.append('image',image)
-        console.log(formdata)
-        console.log(name,email,password,image)
-        console.log(import.meta.env.VITE_IMG_API)
-        try{
-            const {data} = await axios.post(`https://api.imgbb.com/1/upload?expiration=600&key=${import.meta.env.VITE_IMG_API}`,formdata)
-            console.log(data?.data?.display_url)
+        console.log(name, email, password, image)
+        // Upload Image
+        const image_url = await imageUpload(image)
+        try {
+            const { user } = await emailPasswordRegister(email, password)
+            if (user) {
+                try {
+                    updateProfile(user, {
+                        displayName: name,
+                        photoURL: image_url
+                    })
+                    toast.success('User Successfully Registered')
+                    form.reset()
+                    navigate('/login')
+                }
+                catch (error) {
+                    toast.error('Something Wrong in name and photo')
+                    console.log('Name,Phone', error)
+                }
+            }
         }
-        catch(error){
-            console.error(error)
+        catch (error) {
+            console.log(error)
+            toast.error('Something Wrong in Registration')
         }
+
     }
     return (
         <div className='w-full h-screen flex justify-center items-center'>
@@ -44,7 +62,7 @@ const Registration = () => {
                     <div className="flex justify-center mx-auto">
                         <img className="w-[50px] h-auto sm:h-8" src="https://png.pngtree.com/png-clipart/20221110/original/pngtree-health-restaurant-logo-design-template-vector-picture-image_3607709.png" alt="" />
                     </div>
-                
+
                     <div className="flex items-center justify-between mt-4">
                         <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
 
@@ -55,7 +73,7 @@ const Registration = () => {
 
                     <form onSubmit={handleRegister}>
 
-                    <div className="mt-4">
+                        <div className="mt-4">
                             <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" >Name</label>
                             <input id="LoggingEmailAddress" className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="text" name='name' />
                         </div>
