@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ContextProvider } from '../../Auths/User_Managemrnt_Context';
 import toast from 'react-hot-toast';
 import { axiosSecure } from '../../Reuses/useAxiosSecure';
@@ -9,12 +9,14 @@ import axios from 'axios';
 const Login = () => {
     const { googleLogin, emailPasswordLogin } = useContext(ContextProvider)
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectData = location.state || '/'
     const handleLogin = async (e) => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
-        console.log(email, password)
+      
         // Validation
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             toast.error('Invalid Email');
@@ -37,12 +39,12 @@ const Login = () => {
                             role: 'guest',
                             status: 'verified'
                         }
-                        console.log(sendData)
+                      
                         const { data: savedGuestData } = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/user`, sendData)
                         if (savedGuestData) {
                             toast.success('Login Successful')
                             //Slight change while i do with Database
-                            navigate('/')
+                            navigate(redirectData, { replace: true })
                         }
                     }
                     catch (error) {
@@ -81,7 +83,7 @@ const Login = () => {
                         if (savedGuestData) {
                             toast.success('Login Successful')
                             //Slight change while i do with Database
-                            navigate('/')
+                            navigate(redirectData, { replace: true })
                         }
                     }
                     catch (error) {
