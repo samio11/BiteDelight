@@ -18,9 +18,29 @@ const Registration = () => {
         const email = form.email.value;
         const password = form.password.value;
         const image = form.image.files[0];
-        console.log(name, email, password, image)
         // Upload Image
         const image_url = await imageUpload(image)
+
+        // Validation
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            toast.error('Invalid Email');
+            return;
+        }
+
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
+            toast.error('Invalid Password');
+            return;
+        }
+
+        if (name === '') {
+            toast.error('Name Field is required');
+            return;
+        }
+
+        if (image_url === '') {
+            toast.error('Image Field is required');
+            return;
+        }
         try {
             const { user } = await emailPasswordRegister(email, password)
             if (user) {
@@ -48,7 +68,7 @@ const Registration = () => {
     return (
         <div className='w-full h-screen flex justify-center items-center'>
             <Helmet>
-                <title>BiteDelight | Login</title>
+                <title>BiteDelight | Register</title>
             </Helmet>
             <div className="flex w-full flex-row-reverse max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
                 <div
