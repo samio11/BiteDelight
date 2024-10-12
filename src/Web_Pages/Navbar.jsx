@@ -1,13 +1,30 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ContextProvider } from '../Auths/User_Managemrnt_Context';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { axiosSecure } from '../Reuses/useAxiosSecure';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const Navbar = () => {
     const { user, logOut } = useContext(ContextProvider)
+    const [totalAmmount,setTotalAmmount] = useState(0);
+    const navigate = useNavigate();
     // console.log(user)
-    const navigate = useNavigate()
+    const {data:cartData= [],isLoading,refetch:cartLoad} = useQuery({
+        queryKey: ['cart'],
+        queryFn: async()=>{
+           const {data} =await axios(`${import.meta.env.VITE_BACKEND_URL}/cartInfo/${user.email}`)
+           return data
+        }
+    })
+    // console.log(cartData)
+    useEffect(()=>{
+        if(cartData.length){
+            setTotalAmmount(cartData.reduce((acc,curr)=>acc+curr.price,0))
+            cartLoad()
+        }
+    },[])
     const handleLogOut = async () => {
         await logOut();
         try {
@@ -77,17 +94,17 @@ const Navbar = () => {
                                                 strokeWidth="2"
                                                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
-                                        <span className="badge badge-sm indicator-item">8</span>
+                                        <span className="badge badge-sm indicator-item">{cartData.length || 0}</span>
                                     </div>
                                 </div>
                                 <div
                                     tabIndex={0}
                                     className="card card-compact dropdown-content bg-base-100 z-[50] mt-3 w-52 shadow">
                                     <div className="card-body">
-                                        <span className="text-lg font-bold">8 Items</span>
-                                        <span className="text-info">Subtotal: $999</span>
+                                        <span className="text-lg font-bold">Toal Items:- {cartData.length || 0}</span>
+                                        <span className="text-info">Subtotal: ${totalAmmount.toFixed(2) || 0}</span>
                                         <div className="card-actions">
-                                            <button className="btn btn-primary btn-block">View cart</button>
+                                            <button onClick={()=>navigate('/payment')} className="btn btn-primary btn-block">Pay Now</button>
                                         </div>
                                     </div>
                                 </div>
@@ -102,7 +119,7 @@ const Navbar = () => {
                                 </div>
                                 <ul
                                     tabIndex={0}
-                                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[50] mt-3 w-52 p-2 shadow">
+                                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[50] mt-3 w-52 p-2 shadow space-y-2">
                                     <li>
                                         <a className="justify-between">
                                             {user?.displayName}
@@ -110,7 +127,9 @@ const Navbar = () => {
                                             <span className="badge badge-secondary badge-outline">Guest</span>
                                         </a>
                                     </li>
-                                    <li><a>Settings</a></li>
+                                    <li><Link to={'/'}>Home</Link></li>
+                                    <li><Link to={'/payment'}>Abilable Pending  Payments</Link></li>
+
                                     <li><button onClick={handleLogOut} className='btn btn-outline'>Log Out</button></li>
                                 </ul>
                             </div>

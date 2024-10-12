@@ -45,7 +45,7 @@ const FoodCard = ({ food }) => {
                 <span className="text-lg font-bold text-gray-900 dark:text-white">${food.price}</span>
             </div>
             <button onClick={handleShow} className="w-full mt-4 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500 transition duration-200">
-                Add to Cart
+                View for Add Cart
             </button>
         </div>
         <FoodModal open={open} foodData={food} closeModal={handleClose} />

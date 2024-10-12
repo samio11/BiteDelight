@@ -1,8 +1,29 @@
 import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
+import { useContext } from 'react';
 import { FaFire, FaClock, FaPizzaSlice } from 'react-icons/fa';
+import { ContextProvider } from '../../Auths/User_Managemrnt_Context';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const FoodModal = ({ open, foodData, closeModal }) => {
-    console.log(foodData)
+    const {user} = useContext(ContextProvider);
+    const handleAddCart = async() =>{
+        // Add food to cart logic here
+        console.log('Added to cart')
+        const cartData = {...foodData,email: user?.email,food_carted_date: new Date()}
+        try{
+            const {data} = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/cart`,cartData)
+            if(data)
+            {
+                toast.success('Product added successfully')
+                closeModal()
+            }
+        }
+        catch(error){
+            toast.error('Product added failed')
+            console.log(error)
+        }
+    }
     return (
         <div>
             <Dialog open={open} as="div" className="relative z-10 focus:outline-none" onClose={closeModal}>
@@ -72,6 +93,13 @@ const FoodModal = ({ open, foodData, closeModal }) => {
 
                                 {/* Close Button */}
                                 <div className="mt-8">
+                                    <button
+                                        className="inline-flex items-center mx-4 gap-2 rounded-md bg-gray-700 py-2 px-6 text-sm font-semibold text-white shadow-lg hover:bg-gray-600 focus:outline-none"
+                                        onClick={handleAddCart}
+                                        disabled={!user}
+                                    >
+                                        Add to Cart
+                                    </button>
                                     <button
                                         className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-2 px-6 text-sm font-semibold text-white shadow-lg hover:bg-gray-600 focus:outline-none"
                                         onClick={closeModal}
