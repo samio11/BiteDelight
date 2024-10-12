@@ -6,7 +6,7 @@ import { axiosSecure } from '../Reuses/useAxiosSecure';
 
 const Navbar = () => {
     const { user, logOut } = useContext(ContextProvider)
-    console.log(user)
+    // console.log(user)
     const navigate = useNavigate()
     const handleLogOut = async () => {
         await logOut();
