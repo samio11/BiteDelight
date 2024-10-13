@@ -98,7 +98,7 @@ const Payment = () => {
                 <div className='w-[800px] h-auto bg-gradient-to-br from-white to-gray-100 p-6 rounded-lg shadow-md'>
                     <div>
                         <Elements stripe={stripePromise}>
-                            <CheckoutForm />
+                            <CheckoutForm allCartData={cartData} totalAmmount={totalAmmount} />
                         </Elements>
                     </div>
                 </div>
